@@ -5,14 +5,15 @@ class New extends React.Component {
       return (
         <div>
           <link rel="stylesheet" type="text/css" href="../css/style.css"/>
-          <h1>New Pokemon page</h1>
+          <h1>Catch a New Pokemon</h1>
           <form action='/pokemon' method='POST'>
-            Name: <input type='text' name='name' />
+            Name: <input type='text' name='name' placeholder="Search..."/>
             <br />
-            Img url: <input type='text' name='img' />
+            {/* Img url: <input type='text' name='img' /> */}
             <br />
-            <input type='submit' name='' value='Add a new Pokemon' />
+            <input type='submit' name='' value='Catch this Pokemon' />
           </form>
+          <a href="/pokemon">Back to Pokedex</a>
         </div>
       )
     }
