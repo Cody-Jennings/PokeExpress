@@ -15,9 +15,7 @@ app.use(express.static('public'))
 //connect to mongo
 mongoose.connect(mongoURI)
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
-// mongoose.connection.once('open', ()=> {
-//     console.log('connected to mongo')
-// })
+
 
 
 // Connection Error/Success
@@ -61,7 +59,6 @@ app.get("/pokemon", (req, res) => {
       allPokemon: allPokemon, // getting all pokemon from db to pass as props
     })
   })
-  //res.render("Index", {allPokemon: Pokemon})
 })
 
 
