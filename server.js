@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const app = express()
 const port = 3000;
 const Pokemon = require("./models/pokemon")
+const methodOverride = require('method-override')
 
 // Global configuration
 const mongoURI = process.env.MONGO_URI
@@ -42,6 +43,7 @@ app.use((req, res, next) => {
 
 //near the top, around other app.use() calls
 app.use(express.urlencoded({ extended: false }))
+app.use(methodOverride('_method'))
 mongoose.set('strictQuery', true)
 
 //view engine
@@ -61,19 +63,9 @@ app.get("/pokemon", (req, res) => {
   })
 })
 
-
-
 //New route to get a form to create a new pokemon record
 app.get('/pokemon/new', (req, res) => {
   res.render('New')
-})
-
-app.post('/pokemon', (req, res) => {
-  let pokemonBody = req.body
-  pokemonBody.img = pokemonBody.name
-  Pokemon.create(pokemonBody, (error, createdPokemon) => {
-    res.redirect('/pokemon')
-  })
 })
 
 // Pokemon.insertMany(defaultPokemon)
@@ -89,6 +81,46 @@ app.post('/pokemon', (req, res) => {
 // .finally(() => {
 //  db.close()
 // })
+
+//Delete - Delete this one record        //This is the acronym INDUCES
+app.delete('/pokemon/:id', (req, res) => {
+  Pokemon.findByIdAndRemove(req.params.id, (err, data)=>{
+      res.redirect('/pokemon');//redirect back to pokemon index
+  })
+})
+
+//Update - modifying a record
+app.put('/pokemon/:id', (req, res)=>{
+  Pokemon.findByIdAndUpdate(req.params.id, req.body, (err, allPokemon)=>{
+     console.log(allPokemon)
+      res.redirect(`/pokemon/${req.params.id}`)//redirecting to the Show page
+  })
+})
+
+//Create - send the filled form to the database and create a new record
+app.post('/pokemon', (req, res) => {
+  let pokemonBody = req.body
+  pokemonBody.img = pokemonBody.name
+  Pokemon.create(pokemonBody, (error, createdPokemon) => {
+    res.redirect('/pokemon')
+  })
+})
+
+//Edit - go to database and get the record to update
+app.get('/pokemon/:id/edit', (req, res)=>{
+  Pokemon.findById(req.params.id, (err, foundPokemon)=>{ //find the fruit
+    if(!err){
+      res.render(
+        'Edit',
+      {
+        pokemon: foundPokemon //pass in the found pokemon so we can prefill the form
+      }
+    );
+  } else {
+    res.send({ msg: err.message })
+  }
+  })
+})
 
 //Show Route
 app.get('/pokemon/:id', (req, res) => {
